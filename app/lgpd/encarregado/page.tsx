@@ -56,13 +56,22 @@ export default function EncarregadoLGPDPage(): JSX.Element {
     }
 
     try {
+      console.log('📤 [LGPD Frontend] Enviando formulário...');
       const r = await fetch("/api/lgpd/encarregado", {
         method: "POST",
         body: fd,
       });
       let data: any = {};
-      try { data = await r.json(); } catch { /* ignore */ }
-      if (!r.ok) throw new Error(data?.error || "Falha ao enviar");
+      try { 
+        data = await r.json(); 
+        console.log('📥 [LGPD Frontend] Resposta da API:', data);
+      } catch (e) { 
+        console.error('❌ [LGPD Frontend] Erro ao parsear JSON:', e);
+      }
+      if (!r.ok) {
+        console.error('❌ [LGPD Frontend] Erro HTTP:', r.status, data?.error);
+        throw new Error(data?.error || "Falha ao enviar");
+      }
       
       // Armazenar dados do formulário para mostrar no recibo
       const dadosFormulario: Record<string, any> = {};
@@ -72,12 +81,18 @@ export default function EncarregadoLGPDPage(): JSX.Element {
         }
       }
       
+      console.log('📋 [LGPD Frontend] Dados do formulário para sessionStorage:', dadosFormulario);
+      console.log('📋 [LGPD Frontend] Protocolo recebido:', data.protocolo);
+      console.log('📋 [LGPD Frontend] Data recebida:', data.data);
+      
       // Armazenar no sessionStorage para a página de recibo
       if (data.protocolo) {
         sessionStorage.setItem(`recibo-${data.protocolo}`, JSON.stringify(dadosFormulario));
         
         // Redirecionar para página de recibo
-        window.location.href = `/recibo/lgpd?protocolo=${data.protocolo}&data=${data.data}`;
+        const reciboUrl = `/recibo/lgpd?protocolo=${data.protocolo}&data=${data.data}`;
+        console.log('📋 [LGPD Frontend] Redirecionando para:', reciboUrl);
+        window.location.href = reciboUrl;
         return;
       }
       

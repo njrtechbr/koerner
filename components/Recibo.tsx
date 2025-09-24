@@ -40,7 +40,176 @@ export default function Recibo({ data }: ReciboProps) {
   };
 
   const handleDownload = () => {
-    alert('Funcionalidade de download será implementada em breve.');
+    // Implementar download como PDF usando window.print() com configuração específica
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    
+    const printContent = document.querySelector('.print-area')?.innerHTML || '';
+    
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Recibo - ${data.protocolo}</title>
+          <style>
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+              -webkit-print-color-adjust: exact !important;
+              color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            
+            body {
+              font-family: Arial, sans-serif;
+              font-size: 12px;
+              line-height: 1.4;
+              color: #000;
+              background: white;
+              padding: 20px;
+            }
+            
+            .print-header {
+              text-align: center;
+              border-bottom: 2px solid #333;
+              padding-bottom: 15px;
+              margin-bottom: 20px;
+            }
+            
+            .print-header h1 {
+              font-size: 18px;
+              font-weight: bold;
+              margin-bottom: 8px;
+            }
+            
+            .print-header p {
+              font-size: 11px;
+              margin: 2px 0;
+            }
+            
+            .print-protocolo {
+              text-align: center;
+              background: #f8f9fa;
+              border: 2px solid #007bff;
+              border-radius: 8px;
+              padding: 15px;
+              margin: 20px 0;
+            }
+            
+            .print-protocolo h3 {
+              font-size: 14px;
+              margin-bottom: 8px;
+            }
+            
+            .print-protocolo p {
+              font-size: 28px;
+              font-weight: bold;
+              font-family: monospace;
+              color: #007bff;
+              letter-spacing: 2px;
+            }
+            
+            .print-grid {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 15px;
+              margin: 20px 0;
+            }
+            
+            .print-item {
+              flex: 1 1 45%;
+              background: #f8f9fa;
+              border: 1px solid #ddd;
+              border-radius: 6px;
+              padding: 10px;
+            }
+            
+            .print-item dt {
+              font-weight: bold;
+              font-size: 10px;
+              text-transform: uppercase;
+              color: #666;
+              margin-bottom: 4px;
+            }
+            
+            .print-item dd {
+              font-size: 12px;
+              color: #333;
+              word-wrap: break-word;
+            }
+            
+            .print-section {
+              margin: 20px 0;
+              padding: 15px;
+              border: 1px solid #ddd;
+              border-radius: 6px;
+            }
+            
+            .print-section h3 {
+              font-size: 14px;
+              font-weight: bold;
+              margin-bottom: 10px;
+              color: #333;
+            }
+            
+            .print-warning {
+              background: #fff3cd;
+              border: 2px solid #ffc107;
+              border-radius: 6px;
+              padding: 15px;
+              margin: 20px 0;
+            }
+            
+            .print-warning h3 {
+              font-size: 13px;
+              font-weight: bold;
+              margin-bottom: 8px;
+              color: #856404;
+            }
+            
+            .print-warning ul {
+              margin: 0;
+              padding-left: 20px;
+            }
+            
+            .print-warning li {
+              font-size: 11px;
+              line-height: 1.4;
+              margin-bottom: 4px;
+              color: #856404;
+            }
+            
+            .print-footer {
+              text-align: center;
+              border-top: 1px solid #ddd;
+              padding-top: 15px;
+              margin-top: 20px;
+              font-size: 10px;
+              color: #666;
+            }
+            
+            @media print {
+              @page {
+                margin: 1cm;
+                size: A4;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          ${printContent}
+        </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.focus();
+    
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 250);
   };
 
   const formatarData = (dataString: string) => {
@@ -244,7 +413,7 @@ export default function Recibo({ data }: ReciboProps) {
           {/* Área de impressão - 100% Branca */}
           <div className="print-area bg-white" style={{ background: '#ffffff' }}>
             {/* Cabeçalho */}
-            <div className="mb-8 text-center border-b-2 border-gray-200 pb-6">
+            <div className="print-header mb-8 text-center border-b-2 border-gray-200 pb-6">
               <div className="flex items-center justify-center gap-3 mb-4">
                 <FileText className="w-10 h-10 text-blue-600" />
                 <h1 className="text-3xl font-bold text-gray-900">
@@ -273,7 +442,7 @@ export default function Recibo({ data }: ReciboProps) {
               {/* Conteúdo */}
               <div className="p-8 bg-white" style={{ background: '#ffffff' }}>
                 {/* Protocolo em destaque */}
-                <div className="text-center mb-8 p-6 bg-gray-50 border-2 border-blue-200 rounded-lg" style={{ background: '#f8f9fa' }}>
+                <div className="print-protocolo text-center mb-8 p-6 bg-gray-50 border-2 border-blue-200 rounded-lg" style={{ background: '#f8f9fa' }}>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">NÚMERO DO PROTOCOLO</h3>
                   <p className="text-4xl font-mono font-bold text-blue-600 tracking-wider">
                     {data.protocolo}
@@ -284,9 +453,9 @@ export default function Recibo({ data }: ReciboProps) {
                 </div>
 
                 {/* Informações em duas colunas */}
-                <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div className="print-grid grid md:grid-cols-2 gap-8 mb-8">
                   {/* Data */}
-                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200" style={{ background: '#f8f9fa' }}>
+                  <div className="print-item bg-gray-50 p-6 rounded-lg border border-gray-200" style={{ background: '#f8f9fa' }}>
                     <h3 className="font-bold text-gray-900 mb-3 text-lg">📅 Data de Envio</h3>
                     <p className="text-gray-800 text-lg">
                       {formatarData(data.data)}
@@ -294,7 +463,7 @@ export default function Recibo({ data }: ReciboProps) {
                   </div>
 
                   {/* Status */}
-                  <div className="bg-green-50 p-6 rounded-lg border border-green-200" style={{ background: '#f0fdf4' }}>
+                  <div className="print-item bg-green-50 p-6 rounded-lg border border-green-200" style={{ background: '#f0fdf4' }}>
                     <h3 className="font-bold text-gray-900 mb-3 text-lg">✅ Status</h3>
                     <div className="flex items-center gap-2 mb-2">
                       <CheckCircle className="w-5 h-5 text-green-600" />
@@ -306,52 +475,43 @@ export default function Recibo({ data }: ReciboProps) {
                   </div>
                 </div>
 
-                {/* Dados informados */}
-                <div className="border-t-2 border-gray-200 pt-8">
-                  <h3 className="font-bold text-gray-900 mb-6 text-xl">📋 Dados Informados</h3>
+                {/* Dados informados - só exibe se houver dados */}
+                {(() => {
+                  const dadosFiltrados = Object.entries(data.dados)
+                    .filter(([key, value]) => value && value !== '' && key !== 'lgpd' && key !== 'anonimo' && key !== 'website');
                   
-                  {(() => {
-                    const dadosFiltrados = Object.entries(data.dados)
-                      .filter(([key, value]) => value && value !== '' && key !== 'lgpd' && key !== 'anonimo' && key !== 'website');
-                    
-                    console.log('Dados filtrados:', dadosFiltrados); // Debug
-                    
-                    if (dadosFiltrados.length === 0) {
-                      return (
-                        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 text-center" style={{ background: '#f8f9fa' }}>
-                          <p className="text-gray-600">Nenhum dado adicional foi informado.</p>
-                        </div>
-                      );
-                    }
-                    
-                    return (
-                      <div className="space-y-4">
+                  console.log('Dados filtrados:', dadosFiltrados); // Debug
+                  
+                  if (dadosFiltrados.length === 0) {
+                    return null; // Não exibe a seção se não há dados
+                  }
+                  
+                  return (
+                    <div className="print-section border-t-2 border-gray-200 pt-8">
+                      <h3 className="font-bold text-gray-900 mb-6 text-xl">📋 Dados Informados</h3>
+                      <div className="print-grid grid md:grid-cols-2 gap-4">
                         {dadosFiltrados.map(([key, value]) => (
-                          <div key={key} className="bg-gray-50 p-4 rounded-lg border border-gray-200" style={{ background: '#f8f9fa' }}>
+                          <div key={key} className="print-item bg-gray-50 p-4 rounded-lg border border-gray-200" style={{ background: '#f8f9fa' }}>
                             <dt className="font-bold text-gray-900 text-sm uppercase tracking-wide mb-1">
                               {formatarLabel(key)}
                             </dt>
                             <dd className="text-gray-800">
-                              {typeof value === 'string' && value.length > 200 
-                                ? (
-                                  <div className="whitespace-pre-wrap break-words">
-                                    {value}
-                                  </div>
-                                )
+                              {typeof value === 'string' && value.length > 150 
+                                ? `${value.substring(0, 150)}...`
                                 : String(value)}
                             </dd>
                           </div>
                         ))}
                       </div>
-                    );
-                  })()}
-                </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Informações importantes */}
                 <div className="border-t-2 border-gray-200 pt-8 mt-8">
-                  <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-6" style={{ background: '#fefce8' }}>
+                  <div className="print-warning bg-yellow-50 border-2 border-yellow-300 rounded-lg p-6" style={{ background: '#fefce8' }}>
                     <h3 className="font-bold text-gray-900 mb-4 text-xl">⚠️ Informações Importantes</h3>
-                    <ul className="space-y-3 text-gray-800">
+                    <ul className="space-y-2 text-gray-800">
                       <li className="flex items-start gap-2">
                         <span className="text-yellow-600 font-bold">•</span>
                         <span>Guarde este protocolo para acompanhar sua solicitação</span>
@@ -373,7 +533,7 @@ export default function Recibo({ data }: ReciboProps) {
                 </div>
 
                 {/* Rodapé */}
-                <div className="mt-8 pt-6 border-t-2 border-gray-200 text-center text-gray-600">
+                <div className="print-footer mt-8 pt-6 border-t-2 border-gray-200 text-center text-gray-600">
                   <p className="mb-2">
                     <strong>Este documento foi gerado automaticamente em:</strong>
                   </p>
