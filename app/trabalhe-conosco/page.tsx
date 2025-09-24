@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import Layout from "@/components/layout/Layout";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
@@ -18,7 +19,7 @@ const areaOptions = [
 ];
 
 // Helper: deterministic protocol generator (Trabalhe Conosco)
-export function generateProtocolTC(date: Date = new Date(), randomFn: () => number = Math.random): string {
+function generateProtocolTC(date: Date = new Date(), randomFn: () => number = Math.random): string {
   const year = date.getFullYear();
   const rand = Math.floor(randomFn() * 999999).toString().padStart(6, "0");
   return `KOTC-${year}-${rand}`; // Koerner Ofertas/Trabalhe Conosco
@@ -132,12 +133,12 @@ export default function TrabalheConoscoPage(): JSX.Element {
 
           {/* Quick Links */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <a href="/" className="inline-flex items-center justify-center px-6 py-3 border border-border rounded-lg text-foreground hover:bg-muted transition-colors">
+            <Link href="/" className="inline-flex items-center justify-center px-6 py-3 border border-border rounded-lg text-foreground hover:bg-muted transition-colors">
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               Voltar ao início
-            </a>
+            </Link>
             <a href="https://www.koerner.com.br" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-6 py-3 border border-border rounded-lg text-foreground hover:bg-muted transition-colors">
               Visitar koerner.com.br
               <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
