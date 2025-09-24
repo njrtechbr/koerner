@@ -1,44 +1,4 @@
 {
-  "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "installCommand": "npm install",
-  "devCommand": "npm run dev",
-  "env": {
-    "MANDRILL_API_KEY": {
-      "type": "secret"
-    },
-    "SMTP_HOST": {
-      "type": "secret"
-    },
-    "SMTP_PORT": {
-      "type": "secret"
-    },
-    "SMTP_USERNAME": {
-      "type": "secret"
-    },
-    "OUVIDORIA_FROM_EMAIL": {
-      "type": "secret"
-    },
-    "OUVIDORIA_TO_EMAIL": {
-      "type": "secret"
-    },
-    "RH_FROM_EMAIL": {
-      "type": "secret"
-    },
-    "RH_TO_EMAIL": {
-      "type": "secret"
-    },
-    "DPO_FROM_EMAIL": {
-      "type": "secret"
-    },
-    "DPO_TO_EMAIL": {
-      "type": "secret"
-    },
-    "NEXT_PUBLIC_SITE_URL": {
-      "type": "system"
-    }
-  },
   "regions": ["gru1"],
   "functions": {
     "app/api/*/route.ts": {
