@@ -1,5 +1,27 @@
 "use client";
 import React, { useState } from "react";
+import Layout from "@/components/layout/Layout";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import Textarea from "@/components/ui/Textarea";
+import Select from "@/components/ui/Select";
+import FileUpload from "@/components/ui/FileUpload";
+
+const tipoOptions = [
+  { value: "", label: "Selecione o tipo..." },
+  { value: "Reclamação", label: "Reclamação" },
+  { value: "Denúncia", label: "Denúncia" },
+  { value: "Sugestão", label: "Sugestão" },
+  { value: "Elogio", label: "Elogio" },
+  { value: "Dúvida", label: "Dúvida" },
+  { value: "Outro", label: "Outro" },
+];
+
+const retornoOptions = [
+  { value: "email", label: "E-mail" },
+  { value: "telefone", label: "Telefone" },
+  { value: "nenhum", label: "Não desejo retorno" },
+];
 
 export default function OuvidoriaPage(): JSX.Element {
   const [submitting, setSubmitting] = useState(false);
@@ -50,196 +72,245 @@ export default function OuvidoriaPage(): JSX.Element {
     }
   }
 
+  const tipoOptions = [
+    { value: "Reclamação", label: "Reclamação" },
+    { value: "Denúncia", label: "Denúncia" },
+    { value: "Sugestão", label: "Sugestão" },
+    { value: "Elogio", label: "Elogio" },
+    { value: "Dúvida", label: "Dúvida" },
+    { value: "Outro", label: "Outro" }
+  ];
+
+  const retornoOptions = [
+    { value: "email", label: "E-mail" },
+    { value: "telefone", label: "Telefone" },
+    { value: "nenhum", label: "Não desejo retorno" }
+  ];
+
   return (
-    <main className="min-h-screen bg-gray-50 text-gray-900">
-      <div className="mx-auto max-w-3xl px-4 py-10">
-        <h1 className="text-3xl font-semibold tracking-tight">Ouvidoria – Koerner Tabelionato de Notas e Protesto</h1>
-        <p className="mt-2 text-sm text-gray-600">
-          Preencha os campos abaixo. Dados serão tratados conforme a LGPD exclusivamente para apuração da manifestação.
-        </p>
-
-        {/* Acesso rápido */}
-        <div className="mt-4 flex items-center justify-between">
-          <a
-            href="/"
-            className="rounded-xl border px-4 py-2 hover:bg-gray-100"
-            aria-label="Voltar ao início"
-          >
-            ← Voltar ao início
-          </a>
-          <a
-            href="https://www.koerner.com.br"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-xl border px-4 py-2 hover:bg-gray-100"
-            aria-label="Visitar site Koerner"
-          >
-            Visitar koerner.com.br →
-          </a>
-        </div>
-
-        {/* O que é a Ouvidoria */}
-        <section className="mt-6 rounded-2xl border bg-white p-6 shadow">
-          <h2 className="text-lg font-semibold">O que é a Ouvidoria?</h2>
-          <p className="mt-2 text-sm text-gray-700">
-            A Ouvidoria é o canal institucional para você registrar <strong>reclamações, denúncias, sugestões, elogios e dúvidas</strong>
-            sobre os serviços notariais e de protesto. Sua manifestação ajuda a aprimorar processos, garantir a <strong>qualidade do atendimento</strong>
-            e assegurar o cumprimento da legislação. Quando preferir, é possível se manter <strong>anônimo</strong>, mas o fornecimento de contato
-            facilita a apuração e o retorno.
-          </p>
-        </section>
-
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6 bg-white p-6 rounded-2xl shadow">
-          {/* Anti‑bot honeypot */}
-          <input type="text" name="website" className="hidden" tabIndex={-1} autoComplete="off" />
-
-          {/* Tipo de Manifestação */}
-          <div>
-            <label className="block text-sm font-medium">
-              Tipo de manifestação <span className="text-red-600">*</span>
-            </label>
-            <select name="tipo" required className="mt-1 w-full rounded-xl border px-3 py-2">
-              <option value="">Selecione…</option>
-              <option>Reclamação</option>
-              <option>Denúncia</option>
-              <option>Sugestão</option>
-              <option>Elogio</option>
-              <option>Dúvida</option>
-              <option>Outro</option>
-            </select>
+    <Layout>
+      <div className="bg-muted/30 py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              <span className="text-primary">Ouvidoria</span> Koerner
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Canal direto para suas manifestações. Sua opinião é fundamental para melhorarmos nossos serviços.
+            </p>
           </div>
 
-          {/* Anonimato */}
-          <div className="flex items-center gap-3">
-            <input
-              id="anonimo"
-              type="checkbox"
-              name="anonimo"
-              onChange={(e) => setAnonimo(e.target.checked)}
-              className="h-4 w-4"
-            />
-            <label htmlFor="anonimo" className="text-sm">
-              Desejo manter anonimato
-            </label>
+          {/* Info Card */}
+          <div className="bg-card rounded-2xl shadow-lg p-6 md:p-8 mb-8 border border-border">
+            <div className="flex items-start space-x-4">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-card-foreground mb-2">O que é a Ouvidoria?</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  A Ouvidoria é o canal institucional para você registrar <strong>reclamações, denúncias, sugestões, elogios e dúvidas</strong> sobre nossos serviços. 
+                  Sua manifestação ajuda a aprimorar processos e garantir a qualidade do atendimento. É possível se manter <strong>anônimo</strong>, 
+                  mas o fornecimento de contato facilita a apuração e o retorno.
+                </p>
+              </div>
+            </div>
           </div>
 
-          {/* Identificação */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium">
-                Nome completo {anonimo ? <span className="text-gray-400">(opcional)</span> : <span className="text-red-600">*</span>}
-              </label>
-              <input
-                name="nome"
-                required={!anonimo}
-                disabled={anonimo}
-                placeholder="Seu nome"
-                className="mt-1 w-full rounded-xl border px-3 py-2 disabled:bg-gray-100"
+          {/* Form */}
+          <div className="bg-card rounded-2xl shadow-lg overflow-hidden border border-border">
+            <div className="bg-primary px-6 py-4">
+              <h3 className="text-xl font-bold text-primary-foreground">Formulário de Manifestação</h3>
+              <p className="text-primary-foreground/80 text-sm">Preencha os campos abaixo. Todos os dados serão tratados conforme a LGPD.</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6">
+              {/* Anti-bot honeypot */}
+              <input type="text" name="website" className="hidden" tabIndex={-1} autoComplete="off" />
+
+              {/* Tipo de Manifestação */}
+              <Select
+                name="tipo"
+                label="Tipo de manifestação"
+                options={tipoOptions}
+                placeholder="Selecione o tipo..."
+                required
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium">
-                CPF <span className="text-gray-400">(opcional)</span>
-              </label>
-              <input name="cpf" inputMode="numeric" placeholder="000.000.000-00" className="mt-1 w-full rounded-xl border px-3 py-2" />
-            </div>
-          </div>
 
-          {/* Contatos */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium">
-                E‑mail {anonimo ? <span className="text-gray-400">(opcional)</span> : <span className="text-gray-500">(um entre e‑mail/telefone)</span>}
-              </label>
-              <input type="email" name="email" placeholder="voce@exemplo.com" className="mt-1 w-full rounded-xl border px-3 py-2" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium">
-                Telefone {anonimo ? <span className="text-gray-400">(opcional)</span> : <span className="text-gray-500">(um entre e‑mail/telefone)</span>}
-              </label>
-              <input name="telefone" placeholder="(77) 90000-0000" className="mt-1 w-full rounded-xl border px-3 py-2" />
-            </div>
-          </div>
+              {/* Anonimato */}
+              <div className="flex items-center space-x-3 p-4 bg-muted/50 rounded-lg">
+                <input
+                  id="anonimo"
+                  type="checkbox"
+                  name="anonimo"
+                  onChange={(e) => setAnonimo(e.target.checked)}
+                  className="w-4 h-4 text-primary rounded focus:ring-primary"
+                />
+                <label htmlFor="anonimo" className="text-sm font-medium text-foreground">
+                  Desejo manter anonimato
+                </label>
+              </div>
 
-          {/* Preferência de retorno */}
-          <div>
-            <label className="block text-sm font-medium">Preferência de retorno</label>
-            <select name="retorno" className="mt-1 w-full rounded-xl border px-3 py-2">
-              <option value="email">E‑mail</option>
-              <option value="telefone">Telefone</option>
-              <option value="nenhum">Não desejo retorno</option>
-            </select>
-          </div>
+              {/* Identificação */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Input
+                  name="nome"
+                  label={`Nome completo ${anonimo ? '(opcional)' : ''}`}
+                  placeholder="Seu nome completo"
+                  required={!anonimo}
+                  disabled={anonimo}
+                />
+                <Input
+                  name="cpf"
+                  label="CPF (opcional)"
+                  placeholder="000.000.000-00"
+                  inputMode="numeric"
+                />
+              </div>
 
-          {/* Dados do ocorrido */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium">Protocolo (se houver)</label>
-              <input name="protocolo" placeholder="Número do protocolo" className="mt-1 w-full rounded-xl border px-3 py-2" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium">Data do ocorrido</label>
-              <input type="date" name="data_ocorrido" className="mt-1 w-full rounded-xl border px-3 py-2" />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Pessoas envolvidas</label>
-            <input name="envolvidos" placeholder="Nomes, cargos" className="mt-1 w-full rounded-xl border px-3 py-2" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">
-              Relato detalhado <span className="text-red-600">*</span>
-            </label>
-            <textarea
-              name="relato"
-              required
-              rows={8}
-              className="mt-1 w-full rounded-xl border px-3 py-2"
-              placeholder="Descreva o fato, com datas, horários, local, serviços, valores, etc."
-            ></textarea>
-          </div>
+              {/* Contatos */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Input
+                  type="email"
+                  name="email"
+                  label={`E-mail ${anonimo ? '(opcional)' : '(um entre e-mail/telefone)'}`}
+                  placeholder="seu@email.com"
+                />
+                <Input
+                  name="telefone"
+                  label={`Telefone ${anonimo ? '(opcional)' : '(um entre e-mail/telefone)'}`}
+                  placeholder="(77) 99999-9999"
+                />
+              </div>
 
-          {/* Anexos */}
-          <div>
-            <label className="block text-sm font-medium">Anexos (PDF, JPG, PNG) — até 5 arquivos / 5MB cada</label>
-            <input type="file" name="anexos" multiple accept=".pdf,.jpg,.jpeg,.png" className="mt-1" />
+              {/* Preferência de retorno */}
+              <Select
+                name="retorno"
+                label="Preferência de retorno"
+                options={retornoOptions}
+                defaultValue="email"
+              />
+
+              {/* Dados do ocorrido */}
+              <div className="space-y-6">
+                <h4 className="text-lg font-semibold text-foreground border-b border-border pb-2">Dados do Ocorrido</h4>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Input
+                    name="protocolo"
+                    label="Protocolo (se houver)"
+                    placeholder="Número do protocolo"
+                  />
+                  <Input
+                    type="date"
+                    name="data_ocorrido"
+                    label="Data do ocorrido"
+                  />
+                </div>
+                
+                <Input
+                  name="envolvidos"
+                  label="Pessoas envolvidas"
+                  placeholder="Nomes, cargos ou funções"
+                />
+                
+                <Textarea
+                  name="relato"
+                  label="Relato detalhado"
+                  placeholder="Descreva o fato com detalhes: datas, horários, local, serviços, valores, etc."
+                  rows={8}
+                  required
+                />
+              </div>
+
+              {/* Anexos */}
+              <FileUpload
+                name="anexos"
+                label="Anexos (opcional)"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png"
+                maxSizeMB={5}
+                acceptedTypes={['PDF', 'JPG', 'PNG']}
+                helperText="Até 5 arquivos, máximo 5MB cada"
+              />
+
+              {/* LGPD */}
+              <div className="flex items-start space-x-3 p-4 bg-primary/5 rounded-lg border border-primary/20">
+                <input 
+                  id="lgpd" 
+                  type="checkbox" 
+                  name="lgpd" 
+                  required 
+                  className="w-4 h-4 text-primary rounded focus:ring-primary mt-1" 
+                />
+                <label htmlFor="lgpd" className="text-sm text-foreground">
+                  Li e aceito a{' '}
+                  <button 
+                    type="button" 
+                    onClick={() => setShowPolicy(true)} 
+                    className="text-primary underline hover:text-primary/80"
+                  >
+                    política de privacidade
+                  </button>{' '}
+                  e autorizo o uso dos dados para análise da manifestação.
+                </label>
+              </div>
+
+              {/* Messages */}
+              {err && (
+                <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg className="w-5 h-5 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-destructive">{err}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {ok && (
+                <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-green-600 dark:text-green-400">{ok}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-border">
+                <Button 
+                  type="reset" 
+                  variant="outline" 
+                  className="sm:w-auto"
+                >
+                  Limpar Formulário
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={submitting}
+                  className="sm:w-auto sm:ml-auto"
+                  size="lg"
+                >
+                  {submitting ? 'Enviando...' : 'Enviar Manifestação'}
+                </Button>
+              </div>
+            </form>
           </div>
-
-          {/* LGPD */}
-          <div className="flex items-start gap-3">
-            <input id="lgpd" type="checkbox" name="lgpd" required className="mt-1 h-4 w-4" />
-            <label htmlFor="lgpd" className="text-sm">
-              Li e aceito a <button type="button" onClick={() => setShowPolicy(true)} className="underline">política de privacidade</button> e autorizo o uso dos dados para análise da manifestação.
-            </label>
-          </div>
-
-          {err && (
-            <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">{err}</div>
-          )}
-          {ok && (
-            <div className="rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-800">{ok}</div>
-          )}
-
-          <div className="flex items-center justify-end gap-3">
-            <button type="reset" className="rounded-xl border px-4 py-2">
-              Limpar
-            </button>
-            <button disabled={submitting} className="rounded-xl bg-black px-5 py-2 text-white disabled:opacity-60">
-              {submitting ? "Enviando…" : "Enviar manifestação"}
-            </button>
-          </div>
-        </form>
-
-        <div className="mt-10 text-sm text-gray-700 space-y-2">
-          <p><strong>Koerner Tabelionato de Notas e Protesto</strong></p>
-          <p>Rua José Cardoso de Lima, 1230, Centro<br/>Luis Eduardo Magalhães‑BA – CEP: 47850‑003</p>
-          <p>Tel: (77) 3628‑1979 / (77) 3022‑2931</p>
-          <p>Horário de Atendimento: Segunda à Sexta 08:00 - 16:00</p>
         </div>
-
-        <p className="mt-6 text-xs text-gray-500">
-          Em caso de indícios de ilícitos, a ouvidoria pode resguardar o sigilo e solicitar complementações. Denúncias anônimas podem limitar o retorno.
-        </p>
       </div>
       
       {/* Modal – Política de Privacidade */}
@@ -251,19 +322,19 @@ export default function OuvidoriaPage(): JSX.Element {
             aria-hidden="true"
           />
           <div className="absolute inset-0 flex items-center justify-center p-4">
-            <div className="w-full max-w-4xl rounded-2xl bg-white shadow-2xl">
-              <div className="flex items-center justify-between border-b p-4">
-                <h3 className="text-lg font-semibold">Política de Privacidade</h3>
+            <div className="w-full max-w-4xl rounded-2xl bg-card shadow-2xl border border-border">
+              <div className="flex items-center justify-between border-b border-border p-4">
+                <h3 className="text-lg font-semibold text-card-foreground">Política de Privacidade</h3>
                 <button
                   type="button"
                   onClick={() => setShowPolicy(false)}
-                  className="rounded-lg border px-3 py-1 text-sm hover:bg-gray-50"
+                  className="rounded-lg border border-border px-3 py-1 text-sm hover:bg-muted"
                   aria-label="Fechar política de privacidade"
                 >
                   Fechar
                 </button>
               </div>
-              <div className="max-h-[70vh] overflow-y-auto p-4 text-sm leading-relaxed text-gray-800 space-y-4">
+              <div className="max-h-[70vh] overflow-y-auto p-4 text-sm leading-relaxed text-muted-foreground space-y-4">
                 <p><strong>INTRODUÇÃO</strong><br/>
                 Nós, do Tabelionato Koerner de Notas e Protesto de Luís Eduardo Magalhães, atuamos em plena consonância com a Lei Geral de Proteção de Dados – LGPD (Lei Federal nº 13.709/2018), e atos normativos respectivos, em especial o Provimento Conjunto CGJ/CCI nº 03/2021 e Aviso Circular Conjunto nº CGJ/CCI-11/2021 do Tribunal de Justiça do Estado da Bahia, sendo nosso compromisso zelar pela proteção de dados pessoais com fundamento no respeito à privacidade, à autodeterminação informativa, à liberdade de expressão, informação, comunicação e opinião, à inviolabilidade da intimidade, da honra e da imagem, e dos direitos humanos.</p>
                 
@@ -283,6 +354,6 @@ export default function OuvidoriaPage(): JSX.Element {
           </div>
         </div>
       )}
-    </main>
+    </Layout>
   );
 }

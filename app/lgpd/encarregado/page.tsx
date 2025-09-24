@@ -1,5 +1,18 @@
 "use client";
 import React, { useState } from "react";
+import Layout from "@/components/layout/Layout";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import Textarea from "@/components/ui/Textarea";
+import FileUpload from "@/components/ui/FileUpload";
+
+const tipoSolicitacaoOptions = [
+  "Confirmação da existência de tratamento de dados",
+  "Acesso aos dados pessoais",
+  "Correção de dados incompletos, inexatos ou desatualizados",
+  "Informação sobre compartilhamento de dados",
+  "Outra (especificar abaixo)",
+];
 
 export default function EncarregadoLGPDPage(): JSX.Element {
   const [submitting, setSubmitting] = useState(false);
@@ -61,112 +74,211 @@ export default function EncarregadoLGPDPage(): JSX.Element {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 text-gray-900">
-      <div className="mx-auto max-w-3xl px-4 py-10">
-        <h1 className="text-3xl font-semibold tracking-tight">Contato com o Encarregado de Proteção de Dados – LGPD</h1>
-        <p className="mt-3 text-sm text-gray-700">
-          Em conformidade com o Provimento CNJ nº 149/2023 e com a Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018), o Koerner Tabelionato de Notas e Protesto disponibiliza este canal para que os titulares de dados pessoais possam exercer seus direitos e contatar diretamente o Encarregado de Proteção de Dados (DPO) da serventia. Sua manifestação será analisada com a devida atenção e respondida dentro dos prazos legais.
-        </p>
+    <Layout>
+      <div className="min-h-screen bg-muted/30">
+        <div className="mx-auto max-w-4xl px-4 py-12">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              LGPD
+            </div>
+            <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
+              Encarregado de Proteção de Dados
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+              Em conformidade com o <span className="font-semibold text-primary">Provimento CNJ nº 149/2023</span> e com a 
+              <span className="font-semibold text-primary"> Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018)</span>, 
+              disponibilizamos este canal para que você possa exercer seus direitos relacionados aos dados pessoais.
+            </p>
+          </div>
 
-        {/* Acesso rápido */}
-        <div className="mt-4 flex items-center justify-between">
-          <a
-            href="/"
-            className="rounded-xl border px-4 py-2 hover:bg-gray-100"
-            aria-label="Voltar ao início"
-          >
-            ← Voltar ao início
-          </a>
-          <a
-            href="https://www.koerner.com.br"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-xl border px-4 py-2 hover:bg-gray-100"
-            aria-label="Visitar site Koerner"
-          >
-            Visitar koerner.com.br →
-          </a>
-        </div>
+          {/* Quick Links */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <a href="/" className="inline-flex items-center justify-center px-6 py-3 border border-border rounded-lg text-foreground hover:bg-muted transition-colors">
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Voltar ao início
+            </a>
+            <a href="https://www.koerner.com.br" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-6 py-3 border border-border rounded-lg text-foreground hover:bg-muted transition-colors">
+              Visitar koerner.com.br
+              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
 
-        {/* Formulário */}
-        <section className="mt-6 rounded-2xl border bg-white p-6 shadow">
-          <h2 className="text-lg font-semibold">📝 Formulário</h2>
-          <form onSubmit={handleSubmit} className="mt-4 space-y-6">
-            {/* Anti‑bot honeypot */}
-            <input type="text" name="website" className="hidden" tabIndex={-1} autoComplete="off" />
-
-            <div>
-              <label className="block text-sm font-medium">Nome completo <span className="text-red-600">*</span></label>
-              <input name="nome" required placeholder="Seu nome" className="mt-1 w-full rounded-xl border px-3 py-2" />
+          {/* Form */}
+          <div className="bg-card rounded-2xl shadow-lg border border-border p-8">
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-card-foreground mb-2 flex items-center gap-3">
+                <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                Solicitação LGPD
+              </h2>
+              <p className="text-muted-foreground">Preencha o formulário abaixo para exercer seus direitos relacionados à proteção de dados pessoais.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium">E‑mail para contato <span className="text-red-600">*</span></label>
-                <input type="email" name="email" required placeholder="voce@exemplo.com" className="mt-1 w-full rounded-xl border px-3 py-2" />
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Anti-bot honeypot */}
+              <input type="text" name="website" className="hidden" tabIndex={-1} autoComplete="off" />
+
+              {/* Dados de Contato */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">Dados de Contato</h3>
+                
+                <Input
+                  name="nome"
+                  label="Nome completo"
+                  placeholder="Seu nome completo"
+                  required
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Input
+                    type="email"
+                    name="email"
+                    label="E-mail para contato"
+                    placeholder="seu@email.com"
+                    required
+                  />
+                  <Input
+                    name="telefone"
+                    label="Telefone (opcional)"
+                    placeholder="(77) 99999-9999"
+                  />
+                </div>
+              </div>
+
+              {/* Tipo de Solicitação */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">Tipo de Solicitação</h3>
+                
+                <fieldset className="space-y-4">
+                  <legend className="text-sm font-medium text-foreground mb-4">
+                    Selecione o tipo de solicitação <span className="text-destructive">*</span>
+                  </legend>
+                  <div className="space-y-3">
+                    {tipoSolicitacaoOptions.map((label, idx) => (
+                      <label key={idx} className="flex items-start gap-3 p-4 border border-border rounded-lg hover:bg-muted/50 cursor-pointer">
+                        <input 
+                          type="radio" 
+                          name="tipo" 
+                          value={label} 
+                          className="w-4 h-4 text-primary focus:ring-primary mt-1" 
+                          required 
+                        />
+                        <span className="text-sm text-foreground leading-relaxed">{label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              </div>
+
+              {/* Descrição */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">Detalhes da Solicitação</h3>
+                
+                <Textarea
+                  name="descricao"
+                  label="Descrição da solicitação"
+                  placeholder="Descreva detalhadamente sua solicitação relacionada a dados pessoais. Inclua informações como período, tipo de dados, finalidade, etc."
+                  rows={6}
+                  required
+                />
+              </div>
+
+              {/* Anexos */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">Documentos (Opcional)</h3>
+                
+                <FileUpload
+                  name="anexos"
+                  label="Anexar documentos"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.odt"
+                  maxSizeMB={5}
+                  acceptedTypes={['PDF', 'JPG', 'PNG', 'DOC', 'DOCX', 'ODT']}
+                  helperText="Até 5 arquivos, máximo 5MB cada"
+                />
+              </div>
+
+              {/* Messages */}
+              {err && (
+                <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg className="w-5 h-5 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-destructive">{err}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {ok && (
+                <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-green-600 dark:text-green-400">{ok}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-border">
+                <Button 
+                  type="reset" 
+                  variant="outline" 
+                  className="sm:w-auto"
+                >
+                  Limpar Formulário
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={submitting}
+                  className="sm:w-auto sm:ml-auto"
+                  size="lg"
+                >
+                  {submitting ? 'Enviando...' : 'Enviar Solicitação'}
+                </Button>
+              </div>
+            </form>
+          </div>
+
+          {/* Legal Notice */}
+          <div className="mt-8 p-6 bg-muted/50 rounded-xl border border-border">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0">
+                <svg className="w-6 h-6 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                </svg>
               </div>
               <div>
-                <label className="block text-sm font-medium">Telefone (opcional)</label>
-                <input name="telefone" placeholder="(77) 90000-0000" className="mt-1 w-full rounded-xl border px-3 py-2" />
+                <h4 className="font-semibold text-foreground mb-2">Informações Legais</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  As informações prestadas neste formulário serão utilizadas exclusivamente para o atendimento da sua solicitação relacionada ao tratamento de dados pessoais, conforme previsto na LGPD e no Provimento CNJ nº 149/2023. Sua manifestação será analisada com a devida atenção e respondida dentro dos prazos legais.
+                </p>
               </div>
             </div>
-
-            <fieldset>
-              <legend className="block text-sm font-medium">Tipo de solicitação <span className="text-red-600">*</span></legend>
-              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {[
-                  "Confirmação da existência de tratamento de dados",
-                  "Acesso aos dados pessoais",
-                  "Correção de dados incompletos, inexatos ou desatualizados",
-                  "Informação sobre compartilhamento de dados",
-                  "Outra (especificar abaixo)",
-                ].map((label, idx) => (
-                  <label key={idx} className="flex items-start gap-2 text-sm">
-                    <input type="radio" name="tipo" value={label} className="mt-1" required />
-                    <span>{label}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-
-            <div>
-              <label className="block text-sm font-medium">Descrição da solicitação <span className="text-red-600">*</span></label>
-              <textarea name="descricao" required rows={6} className="mt-1 w-full rounded-xl border px-3 py-2" placeholder="Descreva a sua solicitação relacionada a dados pessoais."></textarea>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium">Anexar documentos (opcional)</label>
-              <input type="file" name="anexos" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.odt" className="mt-1" />
-              <p className="mt-1 text-xs text-gray-500">Aceitamos PDF, JPG, PNG, DOC, DOCX e ODT. Até 5 arquivos / 5MB cada.</p>
-            </div>
-
-            {err && (
-              <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">{err}</div>
-            )}
-            {ok && (
-              <div className="rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-800">{ok}</div>
-            )}
-
-            <div className="flex items-center justify-end gap-3">
-              <button type="reset" className="rounded-xl border px-4 py-2">Limpar</button>
-              <button disabled={submitting} className="rounded-xl bg-black px-5 py-2 text-white disabled:opacity-60">
-                {submitting ? "Enviando…" : "Enviar"}
-              </button>
-            </div>
-          </form>
-        </section>
-
-        <p className="mt-6 text-xs text-gray-600 border-t pt-4">
-          ⚖ As informações prestadas neste formulário serão utilizadas exclusivamente para o atendimento da sua solicitação relacionada ao tratamento de dados pessoais, conforme previsto na LGPD e no Provimento CNJ nº 149/2023.
-        </p>
-
-        <div className="mt-10 text-sm text-gray-700 space-y-2">
-          <p><strong>Koerner Tabelionato de Notas e Protesto</strong></p>
-          <p>Rua José Cardoso de Lima, 1230, Centro<br/>Luís Eduardo Magalhães‑BA – CEP: 47850‑003</p>
-          <p>Tel: (77) 3628‑1979 / (77) 3022‑2931</p>
-          <p>Horário de Atendimento: Segunda à Sexta 08:00 - 16:00</p>
+          </div>
         </div>
       </div>
-    </main>
+    </Layout>
   );
 }
