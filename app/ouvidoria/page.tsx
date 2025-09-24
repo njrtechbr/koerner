@@ -61,6 +61,24 @@ export default function OuvidoriaPage(): JSX.Element {
         // ignore
       }
       if (!r.ok) throw new Error(data?.error || "Falha ao enviar");
+      
+      // Armazenar dados do formulário para mostrar no recibo
+      const dadosFormulario: Record<string, any> = {};
+      for (const [key, value] of fd.entries()) {
+        if (key !== 'website' && key !== 'anexos' && value) {
+          dadosFormulario[key] = value;
+        }
+      }
+      
+      // Armazenar no sessionStorage para a página de recibo
+      if (data.protocolo) {
+        sessionStorage.setItem(`recibo-${data.protocolo}`, JSON.stringify(dadosFormulario));
+        
+        // Redirecionar para página de recibo
+        window.location.href = `/recibo/ouvidoria?protocolo=${data.protocolo}&data=${data.data}`;
+        return;
+      }
+      
       setOk("Manifestação enviada com sucesso. Você receberá um protocolo por e‑mail (se informado).");
       form.reset();
       setAnonimo(false);

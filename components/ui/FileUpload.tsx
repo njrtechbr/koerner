@@ -1,5 +1,6 @@
 import { InputHTMLAttributes, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
+import { useStableId } from '@/hooks/useStableId';
 
 interface FileUploadProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label?: string;
@@ -11,7 +12,8 @@ interface FileUploadProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 't
 
 const FileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
   ({ className, label, error, helperText, id, maxSizeMB, acceptedTypes, ...props }, ref) => {
-    const inputId = id || `file-${Math.random().toString(36).substr(2, 9)}`;
+    const generatedId = useStableId('file');
+    const inputId = id || generatedId;
     
     const formatFileTypes = (types?: string[]) => {
       if (!types) return '';

@@ -63,6 +63,24 @@ export default function EncarregadoLGPDPage(): JSX.Element {
       let data: any = {};
       try { data = await r.json(); } catch { /* ignore */ }
       if (!r.ok) throw new Error(data?.error || "Falha ao enviar");
+      
+      // Armazenar dados do formulário para mostrar no recibo
+      const dadosFormulario: Record<string, any> = {};
+      for (const [key, value] of fd.entries()) {
+        if (key !== 'website' && key !== 'anexos' && value) {
+          dadosFormulario[key] = value;
+        }
+      }
+      
+      // Armazenar no sessionStorage para a página de recibo
+      if (data.protocolo) {
+        sessionStorage.setItem(`recibo-${data.protocolo}`, JSON.stringify(dadosFormulario));
+        
+        // Redirecionar para página de recibo
+        window.location.href = `/recibo/lgpd?protocolo=${data.protocolo}&data=${data.data}`;
+        return;
+      }
+      
       setOk("Solicitação enviada com sucesso. Em breve entraremos em contato dentro dos prazos legais.");
       form.reset();
     } catch (e: unknown) {

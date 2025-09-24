@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email";
+import { createEmailTemplate, createConfirmationContent } from "@/lib/email-templates";
 
 const TO = process.env.DPO_TO_EMAIL;
 const FROM = process.env.DPO_FROM_EMAIL;
@@ -43,33 +44,101 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const anexos = form.getAll("anexos");
     for (const file of anexos) {
       if (!(file instanceof File)) continue;
+      if (file.size === 0) continue; // Pular arquivos vazios
       if (attachments.length >= 5) break;
       if (file.size > 5 * 1024 * 1024) continue;
       const buf = Buffer.from(await file.arrayBuffer());
+      if (buf.length === 0) continue; // Pular buffers vazios  
       attachments.push({ filename: sanitizeFilename(file.name), content: buf.toString("base64") });
     }
 
-    const html = `
-      <h2>Contato – Encarregado de Proteção de Dados (LGPD)</h2>
-      <p><strong>Nome:</strong> ${nome}</p>
-      <p><strong>E‑mail:</strong> ${email} &nbsp; <strong>Telefone:</strong> ${telefone}</p>
-      <p><strong>Tipo de solicitação:</strong> ${tipo}</p>
-      <p><strong>Descrição:</strong></p>
-      <pre style="white-space:pre-wrap;font-family:ui-monospace,monospace;background:#f6f7f9;padding:12px;border-radius:8px">${descricao}</pre>
-    `;
+    // Gerar protocolo
+    const protocol = `LGPD-${new Date().getFullYear()}-${Math.floor(Math.random() * 999999).toString().padStart(6, "0")}`;
 
-    const assunto = `LGPD – ${tipo} – ${nome}`;
+    // Template para DPO
+    const internalContent = `
+      <div class="section">
+        <h2>Dados de Contato</h2>
+        <div class="field-group">
+          <div class="field">
+            <span class="field-label">Nome:</span>
+            <span class="field-value">${nome}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">E-mail:</span>
+            <span class="field-value">${email}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Telefone:</span>
+            <span class="field-value">${telefone}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Protocolo:</span>
+            <span class="field-value">${protocol}</span>
+          </div>
+        </div>
+      </div>
 
-    await sendEmail({
+      <div class="section">
+        <h2>Solicitação</h2>
+        <div class="field-group">
+          <div class="field">
+            <span class="field-label">Tipo:</span>
+            <span class="field-value">${tipo}</span>
+          </div>
+        </div>
+        <h3>Descrição:</h3>
+        <div class="pre-text">${descricao}</div>
+      </div>
+
+      ${attachments.length > 0 ? `
+      <div class="section">
+        <h2>Documentos Anexados</h2>
+        <p>${attachments.length} arquivo(s) anexado(s)</p>
+      </div>` : ''}`;
+
+    const internalHtml = createEmailTemplate("Nova Solicitação LGPD", internalContent);
+    const assunto = `LGPD – ${tipo} – ${protocol}`;
+
+    // Enviar para DPO
+    console.log('📤 [LGPD API] Enviando email interno...');
+    console.log('📎 [LGPD API] Anexos encontrados:', attachments.length);
+    
+    const emailData: any = {
       from: FROM || "lgpd@koerner.com.br",
       to: TO,
       subject: assunto,
-      html,
+      html: internalHtml,
       replyTo: email || undefined,
-      attachments: attachments.length ? attachments : undefined,
-    });
+    };
+    
+    // Só adicionar attachments se houver arquivos válidos
+    if (attachments.length > 0) {
+      emailData.attachments = attachments;
+      console.log('📎 [LGPD API] Enviando com anexos:', attachments.map(a => a.filename));
+    }
+    
+    const internalResult = await sendEmail(emailData);
+    console.log('✅ [LGPD API] Email interno enviado:', internalResult.messageId);
 
-    return NextResponse.json({ ok: true });
+    // Enviar confirmação para o usuário
+    console.log('📤 [LGPD API] Enviando confirmação para usuário...');
+    const confirmationContent = createConfirmationContent('lgpd', email, protocol);
+    const confirmationHtml = createEmailTemplate("Confirmação - Solicitação LGPD", confirmationContent, true);
+    
+    const confirmationResult = await sendEmail({
+      from: FROM || "lgpd@koerner.com.br",
+      to: email,
+      subject: `Confirmação de Recebimento - LGPD - ${protocol}`,
+      html: confirmationHtml,
+    });
+    console.log('✅ [LGPD API] Confirmação enviada:', confirmationResult.messageId);
+
+    return NextResponse.json({ 
+      ok: true, 
+      protocolo: protocol,
+      data: new Date().toISOString() 
+    });
   } catch (e: unknown) {
     console.error("API error:", e);
     const message = e instanceof Error ? e.message : "Erro inesperado";

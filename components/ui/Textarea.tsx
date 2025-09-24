@@ -1,5 +1,6 @@
 import { TextareaHTMLAttributes, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
+import { useStableId } from '@/hooks/useStableId';
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
@@ -9,7 +10,8 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, label, error, helperText, id, ...props }, ref) => {
-    const textareaId = id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
+    const generatedId = useStableId('textarea');
+    const textareaId = id || generatedId;
     
     return (
       <div className="w-full">

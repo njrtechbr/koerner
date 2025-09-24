@@ -8,11 +8,11 @@ export default function Header() {
   return (
     <header className="bg-background border-b border-border">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3">
+          <Link href="/" className="flex items-center">
             {logoUrl ? (
-              <div className="relative w-10 h-10">
+              <div className="relative w-12 h-12">
                 <Image
                   src={logoUrl}
                   alt="Koerner Tabelionato"
@@ -22,14 +22,16 @@ export default function Header() {
                 />
               </div>
             ) : (
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold">K</span>
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-lg">K</span>
               </div>  
             )}
-            <div>
-              <h1 className="text-lg font-bold text-foreground">Portal de Formulários</h1>
-            </div>
           </Link>
+          
+          {/* Título Centralizado */}
+          <div className="absolute left-1/2 transform -translate-x-1/2">
+            <h1 className="text-lg font-bold text-foreground">Portal de Formulários</h1>
+          </div>
           
           {/* Navigation */}
           <div className="flex items-center space-x-4">

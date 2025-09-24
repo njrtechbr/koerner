@@ -43,6 +43,12 @@ export async function sendEmail({
   }>;
 }) {
   try {
+    console.log('📧 [EMAIL SERVICE] Iniciando envio...');
+    console.log('   From:', from);
+    console.log('   To:', to);
+    console.log('   Subject:', subject);
+    console.log('   Has attachments:', !!(attachments && attachments.length > 0));
+
     const emailData: any = {
       from,
       to: [to],
@@ -52,16 +58,32 @@ export async function sendEmail({
 
     if (replyTo) {
       emailData.reply_to = replyTo;
+      console.log('   Reply-To:', replyTo);
     }
 
     if (attachments && attachments.length > 0) {
-      emailData.attachments = attachments.map(att => ({
-        filename: att.filename,
-        content: att.content,
-      }));
+      // Filtrar anexos válidos
+      const validAttachments = attachments.filter(att => 
+        att.filename && att.content && att.content.trim().length > 0
+      );
+      
+      if (validAttachments.length > 0) {
+        emailData.attachments = validAttachments.map(att => ({
+          filename: att.filename,
+          content: att.content,
+        }));
+        console.log('   Attachments:', validAttachments.length, 'valid files');
+      } else {
+        console.log('   Attachments: 0 valid files (skipping empty attachments)');
+      }
     }
 
+    console.log('🚀 [EMAIL SERVICE] Enviando via Resend...');
     const result = await resend.emails.send(emailData);
+
+    console.log('✅ [EMAIL SERVICE] Email enviado com sucesso!');
+    console.log('   Message ID:', result.data?.id);
+    console.log('   Result:', result);
 
     return {
       success: true,
@@ -69,7 +91,7 @@ export async function sendEmail({
       response: result,
     };
   } catch (error) {
-    console.error('Erro ao enviar email:', error);
+    console.error('❌ [EMAIL SERVICE] Erro ao enviar email:', error);
     throw error;
   }
 }

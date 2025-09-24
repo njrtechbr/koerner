@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email";
+import { createEmailTemplate, createConfirmationContent } from "@/lib/email-templates";
 
 const TO = process.env.RH_TO_EMAIL;
 const FROM = process.env.RH_FROM_EMAIL;
@@ -42,24 +43,71 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (file.size > 10 * 1024 * 1024) return NextResponse.json({ error: "Currículo acima de 10MB." }, { status: 400 });
 
     const buf = Buffer.from(await file.arrayBuffer());
+    
+    // Gerar protocolo
+    const protocol = `TC-${new Date().getFullYear()}-${Math.floor(Math.random() * 999999).toString().padStart(6, "0")}`;
 
-    const html = `
-      <h2>Candidatura – Trabalhe Conosco (Koerner)</h2>
-      <p><strong>Nome:</strong> ${nome}</p>
-      <p><strong>E‑mail:</strong> ${email} &nbsp; <strong>Telefone:</strong> ${fields["telefone"] || ""}</p>
-      <p><strong>LinkedIn:</strong> ${fields["linkedin"] || ""}</p>
-      <p><strong>Área de interesse:</strong> ${fields["area"] || ""} &nbsp; <strong>Pretensão:</strong> ${fields["pretensao"] || ""}</p>
-      <p><strong>Mensagem:</strong></p>
-      <pre style="white-space:pre-wrap;font-family:ui-monospace,monospace;background:#f6f7f9;padding:12px;border-radius:8px">${fields["mensagem"] || ""}</pre>
-    `;
+    // Template para RH
+    const internalContent = `
+      <div class="section">
+        <h2>Dados Pessoais</h2>
+        <div class="field-group">
+          <div class="field">
+            <span class="field-label">Nome:</span>
+            <span class="field-value">${nome}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">E-mail:</span>
+            <span class="field-value">${email}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Telefone:</span>
+            <span class="field-value">${fields["telefone"] || ""}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">LinkedIn:</span>
+            <span class="field-value">${fields["linkedin"] || ""}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Protocolo:</span>
+            <span class="field-value">${protocol}</span>
+          </div>
+        </div>
+      </div>
 
-    const assunto = `Trabalhe Conosco – ${nome}`;
+      <div class="section">
+        <h2>Informações Profissionais</h2>
+        <div class="field-group">
+          <div class="field">
+            <span class="field-label">Área de interesse:</span>
+            <span class="field-value">${fields["area"] || ""}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Pretensão salarial:</span>
+            <span class="field-value">${fields["pretensao"] || ""}</span>
+          </div>
+        </div>
+        ${fields["mensagem"] ? `
+        <h3>Mensagem:</h3>
+        <div class="pre-text">${fields["mensagem"]}</div>
+        ` : ''}
+      </div>
 
-    await sendEmail({
+      <div class="section">
+        <h2>Documentos</h2>
+        <p><strong>Currículo anexado:</strong> ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</p>
+      </div>`;
+
+    const internalHtml = createEmailTemplate("Nova Candidatura - Trabalhe Conosco", internalContent);
+    const assunto = `Trabalhe Conosco – ${nome} – ${protocol}`;
+
+    // Enviar para RH
+    console.log('📤 [TRABALHE-CONOSCO API] Enviando email interno...');
+    const internalResult = await sendEmail({
       from: FROM || "rh@koerner.com.br",
       to: TO,
       subject: assunto,
-      html,
+      html: internalHtml,
       replyTo: email || undefined,
       attachments: [
         {
@@ -68,8 +116,26 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         },
       ],
     });
+    console.log('✅ [TRABALHE-CONOSCO API] Email interno enviado:', internalResult.messageId);
 
-    return NextResponse.json({ ok: true });
+    // Enviar confirmação para o candidato
+    console.log('📤 [TRABALHE-CONOSCO API] Enviando confirmação para candidato...');
+    const confirmationContent = createConfirmationContent('trabalhe-conosco', email, protocol);
+    const confirmationHtml = createEmailTemplate("Confirmação - Trabalhe Conosco", confirmationContent, true);
+    
+    const confirmationResult = await sendEmail({
+      from: FROM || "rh@koerner.com.br",
+      to: email,
+      subject: `Confirmação de Recebimento - Trabalhe Conosco - ${protocol}`,
+      html: confirmationHtml,
+    });
+    console.log('✅ [TRABALHE-CONOSCO API] Confirmação enviada:', confirmationResult.messageId);
+
+    return NextResponse.json({ 
+      ok: true, 
+      protocolo: protocol,
+      data: new Date().toISOString() 
+    });
   } catch (e: unknown) {
     console.error("API error:", e);
     const message = e instanceof Error ? e.message : "Erro inesperado";
